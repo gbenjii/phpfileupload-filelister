@@ -1,0 +1,42 @@
+<?php
+
+// Feltöltés
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && (isset($_FILES['files']) || isset($_FILES['folder']))) {
+    $errors = [];
+    $upload_successful = false;
+
+    // Meghatározzuk, melyik input mezőből érkeztek a fájlok
+    $files_to_process = isset($_FILES['files']) ? $_FILES['files'] : $_FILES['folder'];
+
+    foreach ($files_to_process['name'] as $key => $name) {
+        $file_name = $files_to_process['name'][$key];
+        $file_tmp = $files_to_process['tmp_name'][$key];
+
+        $target_path = $upload_dir;
+        // Mappastruktúra rekonstruálása, ha a full_path elérhető
+        if (isset($files_to_process['full_path'][$key])) {
+            $full_path = $files_to_process['full_path'][$key];
+            $relative_path = str_replace(basename($full_path), "", $full_path);
+            $target_path .= $relative_path;
+            if (!is_dir($target_path)) {
+                mkdir($target_path, 0777, true); // Mappák létrehozása rekurzívan
+            }
+        }
+        $target_file = $target_path . basename($file_name);
+
+        if (move_uploaded_file($file_tmp, $target_file)) {
+            $upload_successful = true;
+        } else {
+            $errors[] = "Hiba történt a(z) $file_name fájl feltöltésekor.";
+        }
+    }
+    
+?>
+
+<form action="" method="post" enctype="multipart/form-data">
+    Mappák kiválasztása:
+    <input type="file" name="files[]" multiple><br><br>
+    <input type="submit" value="Kiválasztás">
+    <?php if (isset($upload_message)) echo $upload_message; ?>
+    <?php if (isset($error_message)) echo $error_message; ?>
+</form>
