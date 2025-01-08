@@ -75,7 +75,7 @@ usort($filtered_files, function ($a, $b) use ($order) {
 </html>
 
 <FELEZO------------------------------------------------------------------------------------------------------------------------------------------------------------------>
-<meta http-equiv="refresh" content="6">
+<meta http-equiv="refresh" content="30">
 <?php
 session_start();
 
