@@ -1,13 +1,11 @@
 <?php
-// Konfiguráció
-$mappa = 'uploads/';
-$allowed_types = ['jpg', 'png', 'pdf']; // Engedélyezett fájltípusok
 
-// Szűrés és rendezés
+$mappa = 'uploads/';
+$allowed_types = ['jpg', 'png', 'pdf'];
+
 $filter = isset($_GET['filter']) ? $_GET['filter'] : '';
 $order = isset($_GET['order']) ? $_GET['order'] : 'desc';
 
-// Fájlok listázása
 $files = scandir($mappa);
 $filtered_files = [];
 foreach ($files as $file) {
@@ -23,12 +21,10 @@ foreach ($files as $file) {
     }
 }
 
-// Rendezés
 usort($filtered_files, function ($a, $b) use ($order) {
     return $order == 'asc' ? strcmp($a['name'], $b['name']) : strcmp($b['name'], $a['name']);
 });
 
-// HTML kimenet (Bootstrap stílusban)
 ?>
 <!DOCTYPE html>
 <html>
@@ -85,7 +81,6 @@ if (!is_dir($upload_dir)) {
     mkdir($upload_dir, 0755, true);
 }
 
-// Fájl/Mappa létrehozása
 if (isset($_POST['new_file']) && !empty($_POST['new_file'])) {
     $new_file = preg_replace('/[^a-zA-Z0-9_\-\.\s]/', '', $_POST['new_file']);
     $target_path = $upload_dir . $new_file;
@@ -121,7 +116,6 @@ if (isset($_POST['new_file']) && !empty($_POST['new_file'])) {
     }
 }
 
-// Fájlok feltöltése (csak fájlok!)
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['files'])) {
     $errors = [];
     $upload_successful = false;
@@ -155,7 +149,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['files'])) {
 }
 
 
-// Üzenetek megjelenítése és törlése a sessionből
 if (isset($_SESSION['upload_message'])) {
     $upload_message = $_SESSION['upload_message'];
     unset($_SESSION['upload_message']);
